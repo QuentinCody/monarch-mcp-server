@@ -5,7 +5,7 @@ export const monarchCatalog: ApiCatalog = {
     baseUrl: "https://api.monarchinitiative.org/v3/api",
     version: "3.0",
     auth: "none",
-    endpointCount: 20,
+    endpointCount: 10,
     notes:
         "- Cross-species gene-phenotype-disease knowledge graph\n" +
         "- Integrates OMIM, HPO, MONDO, ClinGen, MGI, ZFIN, WormBase, FlyBase\n" +
@@ -13,8 +13,7 @@ export const monarchCatalog: ApiCatalog = {
         "- Association categories use biolink model (e.g. biolink:GeneToPhenotypicFeatureAssociation)\n" +
         "- Entity IDs use CURIEs (e.g. HGNC:1100, MONDO:0007254, HP:0001250)\n" +
         "- Offset/limit pagination (default limit 20, max 500)\n" +
-        "- For association queries, prefer monarch_association_search hand-built tool\n" +
-        "- For entity details, prefer monarch_entity_lookup hand-built tool",
+        "- Code Mode only — use monarch_search + monarch_execute for all queries",
     endpoints: [
         // Associations
         {
@@ -22,7 +21,6 @@ export const monarchCatalog: ApiCatalog = {
             path: "/association",
             summary: "Search associations between genes, diseases, phenotypes with evidence. Core endpoint.",
             category: "associations",
-            coveredByTool: "monarch_association_search",
             queryParams: [
                 { name: "category", type: "string", required: false, description: "Association category (e.g. biolink:GeneToPhenotypicFeatureAssociation, biolink:DiseaseToPhenotypicFeatureAssociation, biolink:GeneToDiseaseAssociation)" },
                 { name: "subject", type: "string", required: false, description: "Subject CURIE (e.g. HGNC:1100)" },
@@ -40,7 +38,6 @@ export const monarchCatalog: ApiCatalog = {
             path: "/entity/{id}",
             summary: "Get detailed entity information by CURIE (gene, disease, phenotype, etc.)",
             category: "entities",
-            coveredByTool: "monarch_entity_lookup",
             pathParams: [
                 { name: "id", type: "string", required: true, description: "Entity CURIE (e.g. HGNC:1100, MONDO:0007254, HP:0001250)" },
             ],
@@ -64,7 +61,6 @@ export const monarchCatalog: ApiCatalog = {
             path: "/sim/search",
             summary: "Search for similar entities based on phenotype profiles (cross-species phenotype comparison)",
             category: "similarity",
-            coveredByTool: "monarch_phenotype_similarity",
             queryParams: [
                 { name: "id", type: "string", required: true, description: "Comma-separated phenotype CURIEs (e.g. HP:0001250,HP:0001263)" },
                 { name: "limit", type: "number", required: false, description: "Max results" },
@@ -90,80 +86,9 @@ export const monarchCatalog: ApiCatalog = {
                 { name: "id", type: "string", required: true, description: "Gene CURIE (e.g. HGNC:1100)" },
             ],
         },
-        {
-            method: "GET",
-            path: "/bioentity/gene/{id}/phenotypes",
-            summary: "Get phenotypes associated with a gene",
-            category: "genes",
-            pathParams: [
-                { name: "id", type: "string", required: true, description: "Gene CURIE" },
-            ],
-            queryParams: [
-                { name: "limit", type: "number", required: false, description: "Max results" },
-            ],
-        },
-        {
-            method: "GET",
-            path: "/bioentity/gene/{id}/diseases",
-            summary: "Get diseases associated with a gene",
-            category: "genes",
-            pathParams: [
-                { name: "id", type: "string", required: true, description: "Gene CURIE" },
-            ],
-            queryParams: [
-                { name: "limit", type: "number", required: false, description: "Max results" },
-            ],
-        },
-        // Disease-specific
-        {
-            method: "GET",
-            path: "/bioentity/disease/{id}",
-            summary: "Get disease-specific information",
-            category: "diseases",
-            pathParams: [
-                { name: "id", type: "string", required: true, description: "Disease CURIE (e.g. MONDO:0007254)" },
-            ],
-        },
-        {
-            method: "GET",
-            path: "/bioentity/disease/{id}/genes",
-            summary: "Get genes associated with a disease",
-            category: "diseases",
-            pathParams: [
-                { name: "id", type: "string", required: true, description: "Disease CURIE" },
-            ],
-            queryParams: [
-                { name: "limit", type: "number", required: false, description: "Max results" },
-            ],
-        },
-        {
-            method: "GET",
-            path: "/bioentity/disease/{id}/phenotypes",
-            summary: "Get phenotypes associated with a disease",
-            category: "diseases",
-            pathParams: [
-                { name: "id", type: "string", required: true, description: "Disease CURIE" },
-            ],
-        },
-        // Phenotype-specific
-        {
-            method: "GET",
-            path: "/bioentity/phenotype/{id}",
-            summary: "Get phenotype-specific information",
-            category: "phenotypes",
-            pathParams: [
-                { name: "id", type: "string", required: true, description: "Phenotype CURIE (e.g. HP:0001250)" },
-            ],
-        },
-        {
-            method: "GET",
-            path: "/bioentity/phenotype/{id}/genes",
-            summary: "Get genes associated with a phenotype",
-            category: "phenotypes",
-            pathParams: [
-                { name: "id", type: "string", required: true, description: "Phenotype CURIE" },
-            ],
-        },
+        // NOTE: In Monarch v3, use /association with subject/object/category filters instead of /bioentity endpoints.
+        // Example: gene→disease = /association?subject=HGNC:1100&category=biolink:CausalGeneToDiseaseAssociation
+        // Example: disease→phenotype = /association?subject=MONDO:0007254&category=biolink:DiseaseToPhenotypicFeatureAssociation
         // Mapping/Resolution
         {
             method: "GET",

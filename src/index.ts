@@ -3,9 +3,6 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerQueryData } from "./tools/query-data";
 import { registerGetSchema } from "./tools/get-schema";
 import { registerCodeMode } from "./tools/code-mode";
-import { registerAssociationSearch } from "./tools/association-search";
-import { registerEntityLookup } from "./tools/entity-lookup";
-import { registerPhenotypeSimilarity } from "./tools/phenotype-similarity";
 import { MonarchDataDO } from "./do";
 
 export { MonarchDataDO };
@@ -23,9 +20,6 @@ export class MyMCP extends McpAgent {
 
     async init() {
         const env = this.env as unknown as MonarchEnv;
-        registerAssociationSearch(this.server, env);
-        registerEntityLookup(this.server, env);
-        registerPhenotypeSimilarity(this.server, env);
         registerQueryData(this.server, env);
         registerGetSchema(this.server, env);
         registerCodeMode(this.server, env);
