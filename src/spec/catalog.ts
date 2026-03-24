@@ -10,10 +10,23 @@ export const monarchCatalog: ApiCatalog = {
         "- Cross-species gene-phenotype-disease knowledge graph\n" +
         "- Integrates OMIM, HPO, MONDO, ClinGen, MGI, ZFIN, WormBase, FlyBase\n" +
         "- No auth required, JSON responses\n" +
-        "- Association categories use biolink model (e.g. biolink:GeneToPhenotypicFeatureAssociation)\n" +
         "- Entity IDs use CURIEs (e.g. HGNC:1100, MONDO:0007254, HP:0001250)\n" +
         "- Offset/limit pagination (default limit 20, max 500)\n" +
-        "- Code Mode only — use monarch_search + monarch_execute for all queries",
+        "- Code Mode only — use monarch_search + monarch_execute for all queries\n" +
+        "\n" +
+        "ASSOCIATION CATEGORIES (Monarch v3 biolink model):\n" +
+        "  Gene→Disease: biolink:CausalGeneToDiseaseAssociation, biolink:CorrelatedGeneToDiseaseAssociation\n" +
+        "  Gene→Phenotype: biolink:GeneToPhenotypicFeatureAssociation\n" +
+        "  Disease→Phenotype: biolink:DiseaseToPhenotypicFeatureAssociation\n" +
+        "  Gene→Gene (orthologs): biolink:GeneToGeneHomologyAssociation\n" +
+        "  WARNING: 'biolink:GeneToDiseaseAssociation' does NOT work in v3 — use Causal or Correlated variants above\n" +
+        "\n" +
+        "COMMON WORKFLOWS:\n" +
+        "  Gene profile: /search?q=DPYD&category=biolink:Gene → get CURIE → /entity/{curie} for details\n" +
+        "  Gene→phenotypes: /association?subject=HGNC:3012&category=biolink:GeneToPhenotypicFeatureAssociation\n" +
+        "  Gene→diseases: /association?subject=HGNC:3012&category=biolink:CausalGeneToDiseaseAssociation\n" +
+        "  Disease→phenotypes: /association?subject=MONDO:0010130&category=biolink:DiseaseToPhenotypicFeatureAssociation\n" +
+        "  Orthologs: /association?subject=HGNC:3012&category=biolink:GeneToGeneHomologyAssociation",
     endpoints: [
         // Associations
         {
@@ -22,7 +35,7 @@ export const monarchCatalog: ApiCatalog = {
             summary: "Search associations between genes, diseases, phenotypes with evidence. Core endpoint.",
             category: "associations",
             queryParams: [
-                { name: "category", type: "string", required: false, description: "Association category (e.g. biolink:GeneToPhenotypicFeatureAssociation, biolink:DiseaseToPhenotypicFeatureAssociation, biolink:GeneToDiseaseAssociation)" },
+                { name: "category", type: "string", required: false, description: "Association category. IMPORTANT: Use biolink:CausalGeneToDiseaseAssociation or biolink:CorrelatedGeneToDiseaseAssociation for gene-disease (NOT biolink:GeneToDiseaseAssociation which returns 422). Other valid: biolink:GeneToPhenotypicFeatureAssociation, biolink:DiseaseToPhenotypicFeatureAssociation, biolink:GeneToGeneHomologyAssociation" },
                 { name: "subject", type: "string", required: false, description: "Subject CURIE (e.g. HGNC:1100)" },
                 { name: "object", type: "string", required: false, description: "Object CURIE (e.g. HP:0001250)" },
                 { name: "predicate", type: "string", required: false, description: "Predicate filter (e.g. biolink:has_phenotype)" },
@@ -66,29 +79,22 @@ export const monarchCatalog: ApiCatalog = {
                 { name: "limit", type: "number", required: false, description: "Max results" },
             ],
         },
-        // Association counts
+        // Association counts — NOTE: This endpoint may return 404 in some Monarch v3 deployments.
+        // If it fails, use /association with category filters and count the results instead.
         {
             method: "GET",
             path: "/association/counts",
-            summary: "Get counts of associations by category for an entity",
+            summary: "Get counts of associations by category for an entity. NOTE: May return 404 — if so, query /association with limit=1 per category to get totals from the response metadata.",
             category: "associations",
             queryParams: [
                 { name: "entity", type: "string", required: true, description: "Entity CURIE" },
             ],
         },
-        // Gene-specific
-        {
-            method: "GET",
-            path: "/bioentity/gene/{id}",
-            summary: "Get gene-specific information including orthologs and function",
-            category: "genes",
-            pathParams: [
-                { name: "id", type: "string", required: true, description: "Gene CURIE (e.g. HGNC:1100)" },
-            ],
-        },
-        // NOTE: In Monarch v3, use /association with subject/object/category filters instead of /bioentity endpoints.
+        // In Monarch v3, use /association with subject/object/category filters for gene queries.
+        // The /bioentity endpoints are deprecated in v3.
         // Example: gene→disease = /association?subject=HGNC:1100&category=biolink:CausalGeneToDiseaseAssociation
-        // Example: disease→phenotype = /association?subject=MONDO:0007254&category=biolink:DiseaseToPhenotypicFeatureAssociation
+        // Example: gene→phenotypes = /association?subject=HGNC:1100&category=biolink:GeneToPhenotypicFeatureAssociation
+        // Example: gene→orthologs = /association?subject=HGNC:1100&category=biolink:GeneToGeneHomologyAssociation
         // Mapping/Resolution
         {
             method: "GET",
