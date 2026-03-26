@@ -6,7 +6,7 @@ import {
     createCodeModeError,
 } from "@bio-mcp/shared/codemode/response";
 
-export function registerEntityLookup(server: McpServer, _env?: unknown) {
+export function registerEntityLookup(server: McpServer, _env?: unknown): void {
     server.registerTool(
         "monarch_entity_lookup",
         {

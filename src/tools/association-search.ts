@@ -14,7 +14,7 @@ interface AssocEnv {
     };
 }
 
-export function registerAssociationSearch(server: McpServer, env?: AssocEnv) {
+export function registerAssociationSearch(server: McpServer, env?: AssocEnv): void {
     server.registerTool(
         "monarch_association_search",
         {
@@ -75,7 +75,7 @@ export function registerAssociationSearch(server: McpServer, env?: AssocEnv) {
                 if (shouldStage(responseSize) && runtimeEnv?.MONARCH_DATA_DO) {
                     const staged = await stageToDoAndRespond(
                         items,
-                        runtimeEnv.MONARCH_DATA_DO as any,
+                        runtimeEnv.MONARCH_DATA_DO as DurableObjectNamespace,
                         "associations",
                         undefined,
                         undefined,

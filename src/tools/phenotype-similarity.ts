@@ -14,7 +14,7 @@ interface SimEnv {
     };
 }
 
-export function registerPhenotypeSimilarity(server: McpServer, env?: SimEnv) {
+export function registerPhenotypeSimilarity(server: McpServer, env?: SimEnv): void {
     server.registerTool(
         "monarch_phenotype_similarity",
         {
@@ -58,7 +58,7 @@ export function registerPhenotypeSimilarity(server: McpServer, env?: SimEnv) {
                 if (shouldStage(responseSize) && runtimeEnv?.MONARCH_DATA_DO) {
                     const staged = await stageToDoAndRespond(
                         results,
-                        runtimeEnv.MONARCH_DATA_DO as any,
+                        runtimeEnv.MONARCH_DATA_DO as DurableObjectNamespace,
                         "similarity_results",
                         undefined,
                         undefined,
