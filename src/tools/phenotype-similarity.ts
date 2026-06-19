@@ -63,7 +63,7 @@ export function registerPhenotypeSimilarity(server: McpServer, env?: SimEnv): vo
                         undefined,
                         undefined,
                         "monarch",
-                        (extra as { sessionId?: string })?.sessionId,
+                        (extra as Record<string, unknown>),
                     );
                     return createCodeModeResponse(
                         {

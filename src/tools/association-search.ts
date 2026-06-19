@@ -80,7 +80,7 @@ export function registerAssociationSearch(server: McpServer, env?: AssocEnv): vo
                         undefined,
                         undefined,
                         "monarch",
-                        (extra as { sessionId?: string })?.sessionId,
+                        (extra as Record<string, unknown>),
                     );
                     return createCodeModeResponse(
                         {

@@ -23,6 +23,8 @@ export function registerCodeMode(
 
     const executeTool = createExecuteTool({
         prefix: "monarch",
+        // Verifiable provenance: monarch_execute results carry a _meta.citation.
+        source: { id: "monarch", name: "Monarch Initiative", url: "https://monarchinitiative.org" },
         catalog: monarchCatalog,
         apiFetch,
         doNamespace: env.MONARCH_DATA_DO,
