@@ -45,7 +45,7 @@ assert(phenoSim.includes("createCodeModeError"), "phenotype-similarity.ts includ
 
 const index = readSrc("src/index.ts");
 assert(index.includes("MonarchDataDO"), "index.ts exports MonarchDataDO");
-assert(index.includes("McpAgent"), "index.ts uses McpAgent");
+assert(index.includes("StatelessMcpWorker"), "index.ts uses StatelessMcpWorker");
 
 console.log(`\n  Total: ${total} | ${GREEN}Passed: ${passed}${RESET} | ${failed > 0 ? RED : ""}Failed: ${failed}${RESET}\n`);
 
