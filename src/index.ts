@@ -4,6 +4,7 @@ import { McpServer } from "@bio-mcp/shared/mcp";
 import { registerQueryData } from "./tools/query-data";
 import { registerGetSchema } from "./tools/get-schema";
 import { registerCodeMode } from "./tools/code-mode";
+import { registerPhenopacket } from "./tools/phenopacket";
 import { MonarchDataDO } from "./do";
 
 export { MonarchDataDO };
@@ -26,6 +27,7 @@ export class MyMCP extends StatelessMcpWorker {
         registerQueryData(this.server, env);
         registerGetSchema(this.server, env);
         registerCodeMode(this.server, env);
+        registerPhenopacket(this.server);
     }
 }
 
