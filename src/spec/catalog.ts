@@ -5,7 +5,7 @@ export const monarchCatalog: ApiCatalog = {
     baseUrl: "https://api.monarchinitiative.org/v3/api",
     version: "3.0",
     auth: "none",
-    endpointCount: 10,
+    endpointCount: 7,
     notes:
         "- Cross-species gene-phenotype-disease knowledge graph\n" +
         "- Integrates OMIM, HPO, MONDO, ClinGen, MGI, ZFIN, WormBase, FlyBase\n" +
